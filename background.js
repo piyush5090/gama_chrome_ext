@@ -742,6 +742,59 @@ async function executeGammaAutomation(
         // 8. (Step 10.11) Wait 4 seconds for rename to save
         logToConsoles("⏳ Step 10.11: Waiting 4 seconds for rename to complete...");
         await new Promise((resolve) => setTimeout(resolve, 4000));
+
+        // 9. (Step 10.12) Click the three-dot menu AGAIN
+            //logToConsoles("🖱️ Step 10.12: Finding three-dot menu button *again*...");
+            // Re-find the menu button on the *same* item
+            //const menuButtonAgain = firstItem.querySelector('button[data-dashboard-doc-menu="true"]');
+            //if (!menuButtonAgain) {
+                //throw new Error("Could not find the menu button for the *second* time.");
+            //}
+            //menuButtonAgain.click();
+            //await new Promise((resolve) => setTimeout(resolve, 1500)); // Wait for menu to open
+
+            // 10. (Step 10.13) Click "Share..." from the menu
+            logToConsoles("🖱️ Step 10.13: Clicking 'Share...' from menu...");
+            const shareMenuItem = await waitForElementWithText("Share...");
+            if (!shareMenuItem) throw new Error("Could not find 'Share...' menu item.");
+            shareMenuItem.click();
+            await new Promise((resolve) => setTimeout(resolve, 1500)); // Wait for share modal to open
+            // ===================================================================
+
+            //STEPS TO EXPORT
+
+            logToConsoles(":hourglass_flowing_sand: Step 12: Clicking 'Export' tab...");
+    try {
+      await waitAndClick(
+        'button[aria-controls="export"][data-tab="true"]',
+        5000
+      );
+      logToConsoles(":white_tick: Clicked 'Export' tab.");
+    } catch (exportError) {
+      logToConsoles(":warning: 'Export' tab not found, proceeding.", exportError);
+    }
+    // === STEP 13: Click 'Export as PNGs' ===
+    logToConsoles(":hourglass_flowing_sand: Step 13: Clicking 'Export as PNGs'...");
+    try {
+      const exportTextElement = await waitForElementWithText(
+        "Export as PNGs",
+        5000
+      );
+      const clickableButton = exportTextElement.closest("button");
+      if (clickableButton) {
+        logToConsoles(
+          ":white_tick: Found 'Export as PNGs' text, clicking parent button..."
+        );
+        clickableButton.click();
+      } else {
+        logToConsoles(":warning: Could not find parent button, clicking fallback.");
+        exportTextElement.parentElement.click();
+      }
+      // Increased wait time for download to start
+      await new Promise((resolve) => setTimeout(resolve, 10000));
+      } catch (exportPngError) {
+      logToConsoles(":warning: 'Export as PNGs' not found.", exportPngError);
+    }
       } else {
         throw new Error("Grid was found, but it contains no items.");
       }
