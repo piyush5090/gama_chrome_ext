@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "Gamma Automator",
+  "version": "1.0",
+  "description": "Automate Gamma presentation creation from markdown files",
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "storage",
+    "scripting",
+    "downloads"
+  ],
+  "host_permissions": [
+    "https://gamma.app/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Gamma Automator"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://gamma.app/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["input/**/*.md"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=450, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">✨</div>
+      <h1>Gamma Automator</h1>
+      <div class="subtitle">Automated presentation generation</div>
+    </div>
+
+    <!-- Configuration Section -->
+    <div class="config-section">
+      <h3>⚙️ Configuration</h3>
+      <div class="config-row">
+        <label for="promptWait">Prompt editor wait (sec):</label>
+        <input type="number" id="promptWait" value="15" min="5" max="60">
+      </div>
+      <div class="config-row">
+        <label for="generationWait">Generation timeout (sec):</label>
+        <input type="number" id="generationWait" value="10" min="10" max="100">
+      </div>
+    </div>
+    
+    <div class="file-info">
+      <div class="auto-load-info">
+        <p>📁 Ready to process:</p>
+        <div class="file-preview">
+          <span class="course-badge">Course 383</span>
+          <span class="file-name">01-05-c.md</span>
+          <span class="mode-badge">5 Files</span>
+        </div>
+      </div>
+      <details class="manual-section">
+        <summary>Manual folder selection (if needed)</summary>
+        <input type="file" id="folderInput" webkitdirectory multiple>
+      </details>
+    </div>
+    
+    <div class="status-section">
+      <div id="fileCount">Ready to process: 5 files (Course 383 - Lectures 01-05)</div>
+      
+      <!-- Live Status Display -->
+      <div id="liveStatus" class="live-status hidden">
+        <div class="status-header">
+          <div class="status-icon">🔄</div>
+          <div class="status-title">Automation in Progress</div>
+        </div>
+        <div class="current-step" id="currentStep">Initializing...</div>
+        <div class="step-details" id="stepDetails">Getting ready to start automation</div>
+      </div>
+      
+      <div id="progress" class="hidden">
+        <div class="progress-bar">
+          <div id="progressFill"></div>
+        </div>
+        <div id="progressText">Ready to start...</div>
+      </div>
+    </div>
+    
+    <div class="button-section">
+      <button id="startBtn" class="primary-btn">
+        <span class="btn-icon">🚀</span>
+        Start Automation
+      </button>
+      <button id="stopBtn" class="secondary-btn hidden">
+        <span class="btn-icon">⏹️</span>
+        Stop
+      </button>
+      <button id="downloadBtn" class="success-btn hidden">
+        <span class="btn-icon">📥</span>
+        Download Results
+      </button>
+    </div>
+    
+    <div id="results" class="results-section hidden">
+      <h3>📊 Results</h3>
+      <div id="resultsList"></div>
+    </div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>
