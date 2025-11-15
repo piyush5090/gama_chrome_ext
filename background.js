@@ -603,22 +603,37 @@ async function executeGammaAutomation(
        await checkStopSignal(`Start of loop for Slide ${slideNumber}`);
        logToConsoles(`---[ Processing Slide ${slideNumber} ]---`);
 
-       try {
-         logToConsoles(`🎨 Step 10.2 (Slide ${slideNumber}): Clicking 'Insert Card'...`);
-         await waitAndClick("button.chakra-button.insert-ai-card-button.css-hgkz48");
-       } catch (insertCardError) {
-         logToConsoles(`⚠️ 'Insert Card' button not found. Aborting loop.`, insertCardError);
-         throw new Error("Could not find 'Insert Card' button.");
-       }
-       
-       try {
-         logToConsoles(`📝 Step 10.3 (Slide ${slideNumber}): Filling textarea...`);
-         const textarea = await waitForElement('textarea[data-in-editor-focus="true"].chakra-textarea.css-1fgdkt');
-         await insertTextIntoTextarea(textarea, slideContent);
-       } catch (textareaError) {
-         logToConsoles(`⚠️ Textarea not found. Aborting loop.`, textareaError);
-         throw new Error("Could not find card textarea.");
-       }
+       // === NEW 2-STEP CLICK PROCESS ===
+       try {
+         // Step 10.2a: Click the dropdown menu
+         logToConsoles(`🎨 Step 10.2a (Slide ${slideNumber}): Clicking 'Add Card' dropdown...`);
+         const addCardDropdown = await waitForElement('button[aria-label="Open add card menu"]');
+         if (!addCardDropdown) throw new Error("Could not find 'Add Card' dropdown.");
+         addCardDropdown.click();
+         await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for menu
+
+         // Step 10.2b: Click "Add new with AI" from the menu
+         logToConsoles(`🎨 Step 10.2b (Slide ${slideNumber}): Clicking 'Add new with AI'...`);
+         const addNewWithAiButton = await waitForElementWithText("Add new with AI");
+         if (!addNewWithAiButton) throw new Error("Could not find 'Add new with AI' menu item.");
+         addNewWithAiButton.click();
+         await new Promise((resolve) => setTimeout(resolve, 1500)); // Wait for textarea
+
+       } catch (insertCardError) {
+         logToConsoles(`⚠️ 'Add new with AI' flow failed. Aborting loop.`, insertCardError);
+         throw new Error("Could not find 'Add new with AI' flow buttons.");
+       }
+       
+       // === NEW TEXTAREA SELECTOR ===
+       try {
+         logToConsoles(`📝 Step 10.3 (Slide ${slideNumber}): Filling textarea...`);
+         const textarea = await waitForElement('textarea[placeholder="Describe what you\'d like to make"]');
+         if (!textarea) throw new Error("Could not find the 'Describe...' textarea.");
+         await insertTextIntoTextarea(textarea, slideContent);
+       } catch (textareaError) {
+         logToConsoles(`⚠️ Textarea not found. Aborting loop.`, textareaError);
+         throw new Error("Could not find card textarea.");
+       }
        
        try {
          logToConsoles(`🚀 Step 10.4 (Slide ${slideNumber}): Clicking 'Generate Card'...`);
